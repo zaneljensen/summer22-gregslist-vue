@@ -1,32 +1,56 @@
 <template>
-  <div class="hover-car selectable my-3" :title="car.make">
-    <router-link :to="{ name: 'Car', params: { carId: car.id } }">
+  <div class="car-page" v-if="car">
+    <div class="my-3" :title="car.make">
       <img class="img-fluid" :src="car.img" alt="">
-    </router-link>
-    <!-- <div class="p-2">
+      <div class="p-2">
         <h4 class="text-center">{{ car.make }} | {{ car.model }} | {{ car.year }}</h4>
         <p>{{ car.description }}</p>
         <p class="text-end text-success m-0">$<b>{{ car.price }}</b></p>
         <button class="btn btn-info" @click="adjustCar(car)" data-bs-toggle="modal" data-bs-target="#car-form">Adjust
           Car Settings</button>
         <button class="btn btn-danger" @click="deleteCar(car)">delete me</button>
-      </div> -->
+      </div>
+    </div>
+    <Modal id="car-form">
+      <CarForm />
+    </Modal>
+  </div>
+  <div v-else>
+    loading...
   </div>
 </template>
 
 
 <script>
-import { Car } from '../models/Car.js';
-import { carsService } from '../services/CarsService.js';
-import { logger } from '../utils/Logger.js';
-import Pop from '../utils/Pop.js';
+import { computed } from '@vue/reactivity'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { AppState } from '../AppState.js'
+import { carsService } from '../services/CarsService.js'
+import { logger } from '../utils/Logger.js'
+import Pop from '../utils/Pop.js'
 
 export default {
-  props: {
-    car: { type: Car, required: true }
-  },
   setup() {
+    const route = useRoute()
+
+
+    async function getCarById() {
+      try {
+        //                                        v magic string
+        await carsService.getCarById(route.params.carId)
+      } catch (error) {
+        logger.error('[Get Car By Id]', error)
+        Pop.error(error)
+      }
+    }
+
+    onMounted(() => {
+      getCarById()
+    })
+
     return {
+      car: computed(() => AppState.activeCar),
       adjustCar(car) {
         carsService.setActiveCar(car)
       },
@@ -47,13 +71,4 @@ export default {
 
 
 <style lang="scss" scoped>
-.hover-car {
-  transition: all .15s linear;
-
-  &:hover {
-    transform: translateY(2px);
-    border-radius: 10px;
-  }
-
-}
 </style>

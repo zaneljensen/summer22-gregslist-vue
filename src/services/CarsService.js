@@ -1,24 +1,24 @@
 import { AppState } from "../AppState.js";
 import { Car } from "../models/Car.js";
-import { api } from "./AxiosService.js";
+import { server } from "./AxiosService.js";
 
 class CarsService {
   async editCar(carData) {
-    let res = await api.put(`api/cars/${carData.id}`, carData)
+    let res = await server.put(`api/cars/${carData.id}`, carData)
     let car = new Car(res.data)
     let carIndex = AppState.cars.findIndex(c => c.id == carData.id)
     AppState.cars.splice(carIndex, 1, car)
   }
 
   async getCars() {
-    let res = await api.get('api/cars')
+    let res = await server.get('api/cars')
     AppState.cars = res.data.map(c => new Car(c))
   }
 
   // Example for making a POST request
   async createCar(carFormData) {
 
-    let res = await api.post('api/cars', carFormData)
+    let res = await server.post('api/cars', carFormData)
     // ALWAYS LOOK AT YOUR RESPONSE
     let car = new Car(res.data)
     AppState.cars = [...AppState.cars, car]
@@ -26,12 +26,17 @@ class CarsService {
 
   async deleteCar(carId) {
     let url = `api/cars/${carId}` // string interpolation
-    await api.delete(url)
+    await server.delete(url)
     AppState.cars = AppState.cars.filter(c => c.id != carId)
   }
 
-  setActiveCar(car){
+  setActiveCar(car) {
     AppState.activeCar = car
+  }
+
+  async getCarById(carId) {
+    const res = await server.get(`api/cars/${carId}`)
+    AppState.activeCar = new Car(res.data)
   }
 
 

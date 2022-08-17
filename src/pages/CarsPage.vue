@@ -7,6 +7,8 @@
         </div>
       </div>
     </div>
+    <button class="btn btn-fab btn-primary" title="Add Car" data-bs-toggle="modal" data-bs-target="#car-form"
+      @click="setActiveCar()"><i class="mdi mdi-plus f-18 text-white"></i></button>
   </div>
   <Modal id="car-form">
     <CarForm />
@@ -38,7 +40,10 @@ export default {
     })
 
     return {
-      cars: computed(() => AppState.cars)
+      cars: computed(() => AppState.cars),
+      setActiveCar() {
+        carsService.setActiveCar({})
+      }
     }
   }
 }
@@ -46,4 +51,10 @@ export default {
 
 
 <style lang="scss" scoped>
+.btn-fab {
+  position: fixed;
+  border-radius: 50%;
+  bottom: 3rem;
+  right: 2rem;
+}
 </style>

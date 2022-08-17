@@ -17,6 +17,12 @@ const routes = [
     component: loadPage('CarsPage')
   },
   {
+    //            v magic strings
+    path: '/cars/:carId',
+    name: 'Car',
+    component: loadPage('CarPage')
+  },
+  {
     path: '/about',
     name: 'About',
     component: loadPage('AboutPage')

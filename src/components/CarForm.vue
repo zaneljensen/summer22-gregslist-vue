@@ -62,6 +62,7 @@ export default {
           } else {
             carsService.createCar(editable.value)
           }
+          editable.value = {} // clears the form
         } catch (error) {
           logger.error('[Creating or Editing Car]', error)
           Pop.error(error)
